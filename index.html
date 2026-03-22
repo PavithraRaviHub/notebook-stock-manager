@@ -41,10 +41,27 @@ th{background:#333;color:white}
 </table>
 
 </div>
-
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
+  const firebaseConfig = {
+  const firebaseConfig = {
+    apiKey: "AIzaSyCZ8AIWlujhoThqz-X-DyMOfDmT7ibKkLE",
+    authDomain: "notebook-stock-manager.firebaseapp.com",
+    databaseURL: "https://notebook-stock-manager-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "notebook-stock-manager",
+    storageBucket: "notebook-stock-manager.firebasestorage.app",
+    messagingSenderId: "384658822838",
+    appId: "1:384658822838:web:e7e1be6f897f584e53b817",
+    measurementId: "G-6X4YV0X9VP"
+  };
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 let data = {}
 
+function addCategory(){
 function addCategory(){
 const cat = document.getElementById("cat").value
 const prev = parseInt(document.getElementById("prev").value)
@@ -53,7 +70,14 @@ const curr = parseInt(document.getElementById("curr").value)
 if(!cat) return alert("Enter category")
 
 data[cat] = {prev, curr}
+
+db.collection("notebooks").doc(cat).set({
+prev: prev,
+curr: curr
+})
+
 updateUI()
+}
 }
 
 function sell(){
@@ -72,7 +96,7 @@ item.prev = 0
 item.curr -= sold
 if(item.curr < 0) item.curr = 0
 }
-
+db.collection("notebooks").doc(cat).set(item)
 updateUI()
 }
 
@@ -98,6 +122,12 @@ table.innerHTML += `
 select.innerHTML += `<option>${cat}</option>`
 }
 }
+  db.collection("notebooks").get().then(snapshot=>{
+snapshot.forEach(doc=>{
+data[doc.id] = doc.data()
+})
+updateUI()
+})
 </script>
 
 </body>
