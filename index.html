@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Notebook Stock Manager</title>
+<style>
+body{font-family:Arial;padding:20px;background:#f5f5f5}
+.box{background:white;padding:20px;border-radius:10px}
+input,select,button{padding:8px;margin:5px}
+table{width:100%;border-collapse:collapse;margin-top:20px}
+th,td{border:1px solid #ddd;padding:8px;text-align:center}
+th{background:#333;color:white}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+<h2>📚 Notebook Stock Manager</h2>
+
+<h3>Add / Update Category</h3>
+<input id="cat" placeholder="Category name"/>
+<input id="prev" type="number" placeholder="Previous Year Stock"/>
+<input id="curr" type="number" placeholder="Current Year Stock"/>
+<button onclick="addCategory()">Save</button>
+
+<h3>Sell Notebooks</h3>
+<select id="sellCat"></select>
+<input id="soldQty" type="number" placeholder="Sold quantity"/>
+<button onclick="sell()">Sell</button>
+
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Prev Yr</th>
+<th>Curr Yr</th>
+<th>Total Left</th>
+</tr>
+</thead>
+<tbody id="table"></tbody>
+</table>
+
+</div>
+
+<script>
+let data = {}
+
+function addCategory(){
+const cat = document.getElementById("cat").value
+const prev = parseInt(document.getElementById("prev").value)
+const curr = parseInt(document.getElementById("curr").value)
+
+if(!cat) return alert("Enter category")
+
+data[cat] = {prev, curr}
+updateUI()
+}
+
+function sell(){
+const cat = document.getElementById("sellCat").value
+let sold = parseInt(document.getElementById("soldQty").value)
+
+if(!data[cat]) return
+
+let item = data[cat]
+
+if(item.prev >= sold){
+item.prev -= sold
+}else{
+sold -= item.prev
+item.prev = 0
+item.curr -= sold
+if(item.curr < 0) item.curr = 0
+}
+
+updateUI()
+}
+
+function updateUI(){
+const table = document.getElementById("table")
+const select = document.getElementById("sellCat")
+
+table.innerHTML=""
+select.innerHTML=""
+
+for(let cat in data){
+let d = data[cat]
+
+table.innerHTML += `
+<tr>
+<td>${cat}</td>
+<td>${d.prev}</td>
+<td>${d.curr}</td>
+<td>${d.prev + d.curr}</td>
+</tr>
+`
+
+select.innerHTML += `<option>${cat}</option>`
+}
+}
+</script>
+
+</body>
+</html>
